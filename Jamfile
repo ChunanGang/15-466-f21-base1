@@ -123,6 +123,7 @@ GAME_NAMES =
 	data_path
 	Mode
 	GL
+	SpriteReader
 	;
 
 LOCATE_TARGET = objs ; #put objects in 'objs' directory
