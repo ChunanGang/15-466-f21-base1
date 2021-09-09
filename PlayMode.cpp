@@ -103,12 +103,9 @@ PlayMode::PlayMode() {
 		glm::u8vec4(0x00, 0x00, 0x00, 0x00),
 	};
 
-	glm::u8vec4 temp(0xff, 0x00, 0x00, 0xff);
-	glm::u8vec4 temp2(0xff, 0x00, 0x00, 0xff);
-	std::cout << (temp == temp2) << "\n";
-	SpriteReader spriteReader(&ppu);
-	SpriteGroup sg;
-	spriteReader.getSpriteGroupFromPNG("pic.png", glm::uvec2(40,40), sg);
+	// SpriteReader spriteReader(&ppu);
+	// SpriteGroup sg;
+	// spriteReader.getSpriteGroupFromPNG("../pic.png", glm::uvec2(40,40), sg);
 
 }
 
