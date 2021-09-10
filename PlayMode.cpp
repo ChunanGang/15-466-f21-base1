@@ -15,13 +15,13 @@ PlayMode::PlayMode() {
 
 	// ---- character sprites ---- //
 	// read a player.png into playerSprite. Which can be draw directly later. 
-	spriteReader.getSpriteGroupFromPNG("../player.png", glm::uvec2(40,40), 0, playerSprite);
+	spriteReader.getSpriteGroupFromPNG("../player.png", 0, playerSprite);
 	// load the second picture for player (playerSprite2), but set invisible for now
-	spriteReader.getSpriteGroupFromPNG("../player2.png", glm::uvec2(40,40), 0, playerSprite2);
+	spriteReader.getSpriteGroupFromPNG("../player2.png", 0, playerSprite2);
 	playerSprite2.setInVisible();
 
 	// read a bullet.png into the bullet spriteGroup
-	spriteReader.getSpriteGroupFromPNG("../bullet.png", glm::uvec2(8,8), 0, bullet);
+	spriteReader.getSpriteGroupFromPNG("../bullet.png", 0, bullet);
 	// if the spriteGroups are using the same image, we can call duplicateSpriteGroup 
 	spriteReader.duplicateSpriteGroup(bullet, bullet2);
 	spriteReader.duplicateSpriteGroup(bullet, bullet3);
@@ -31,12 +31,12 @@ PlayMode::PlayMode() {
 	spriteReader.setBackgroundGeneralSprite("../back.png");
 
 	// read a png imag and set it into background in a specified location
-	// In this case, we are reading a head.png with size 40x40, and put in into
+	// In this case, we are reading a head.png and put in into
 	//  the background in location [20,20] from left bot, with tile as the unit. 
 	//  (note the whole background is 64x06)
-	spriteReader.setPNGIntoBackground("../head.png", glm::uvec2(40,40), glm::uvec2(20,20));
+	spriteReader.setPNGIntoBackground("../head.png", glm::uvec2(20,20));
 	// another png into background
-	spriteReader.setPNGIntoBackground("../house.png", glm::uvec2(48,40), glm::uvec2(5,10));
+	spriteReader.setPNGIntoBackground("../house.png", glm::uvec2(5,10));
 }
 
 PlayMode::~PlayMode() {

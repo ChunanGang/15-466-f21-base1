@@ -5,11 +5,12 @@
 
 // ---------- character sprite --------------- //
 
-void SpriteReader::getSpriteGroupFromPNG(std::string const & path, glm::uvec2 size, int priority, SpriteGroup & spriteGroup){
+void SpriteReader::getSpriteGroupFromPNG(std::string const & path, int priority, SpriteGroup & spriteGroup){
     
     assert(palette_offset_index < 8); // 8 available palettes
 
     // read png into vector - pic
+    glm::uvec2 size;
     std::vector< glm::u8vec4 > pic;
     load_png( data_path(path), &size, &pic, LowerLeftOrigin); //TODO add try-catch block
 
@@ -184,11 +185,12 @@ void SpriteReader::setBackgroundGeneralSprite(std::string const & path){
 }
 
 // read a png imag and set it into background in a specified location
-void SpriteReader::setPNGIntoBackground(std::string const & path, glm::uvec2 size, glm::uvec2 location ){
+void SpriteReader::setPNGIntoBackground(std::string const & path, glm::uvec2 location ){
 
     assert(palette_offset_index < 8); // 8 available palettes
 
     // read png into vector - pic
+    glm::uvec2 size;
     std::vector< glm::u8vec4 > pic;
     load_png( data_path(path), &size, &pic, LowerLeftOrigin); //TODO add try-catch block
 

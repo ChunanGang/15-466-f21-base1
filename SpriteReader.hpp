@@ -27,12 +27,12 @@ class SpriteReader{
 
 public:
     void setPPUPtr(PPU466 * ppu_ptr){ppu = ppu_ptr;}
-    // read a png file with "size", and load it into "spriteGroup" for future use
-    void getSpriteGroupFromPNG(std::string const & path, glm::uvec2 size, int priority, SpriteGroup & spriteGroup);
+    // read a png file from "path", and load it into "spriteGroup" for future use
+    void getSpriteGroupFromPNG(std::string const & path, int priority, SpriteGroup & spriteGroup);
     // read a 8x8 png and set it as basic background
     void setBackgroundGeneralSprite(std::string const & path);
     // read a png imag and set it into background in a specified location
-    void setPNGIntoBackground(std::string const & path, glm::uvec2 size, glm::uvec2 location );
+    void setPNGIntoBackground(std::string const & path, glm::uvec2 location );
     // duplicate an existing spriteGroup
     void duplicateSpriteGroup(SpriteGroup const & from, SpriteGroup & to);
 };
