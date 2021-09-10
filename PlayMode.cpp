@@ -13,15 +13,20 @@ PlayMode::PlayMode() {
 	// link the using ppu to the sprite reader
 	spriteReader.setPPUPtr(&ppu);
 
-	// read a player.png into the playerSprite object. Which can be draw directly. 
+	// ---- character sprites ---- //
+	// read a player.png into playerSprite. Which can be draw directly later. 
 	spriteReader.getSpriteGroupFromPNG("../player.png", glm::uvec2(40,40), 0, playerSprite);
+	// load the second picture for player (playerSprite2), but set invisible for now
+	spriteReader.getSpriteGroupFromPNG("../player2.png", glm::uvec2(40,40), 0, playerSprite2);
+	playerSprite2.setInVisible();
 
-	// read a bullet.png into the bullet object
+	// read a bullet.png into the bullet spriteGroup
 	spriteReader.getSpriteGroupFromPNG("../bullet.png", glm::uvec2(8,8), 0, bullet);
-	// if the spriteGroups are using the same image, we can call duplicateSpriteGroup
+	// if the spriteGroups are using the same image, we can call duplicateSpriteGroup 
 	spriteReader.duplicateSpriteGroup(bullet, bullet2);
 	spriteReader.duplicateSpriteGroup(bullet, bullet3);
 
+	// ---- backgrounds ---- //
 	// read a 8x8 png and set it the basic background (covers the whole background)
 	spriteReader.setBackgroundGeneralSprite("../back.png");
 
@@ -30,6 +35,8 @@ PlayMode::PlayMode() {
 	//  the background in location [20,20] from left bot, with tile as the unit. 
 	//  (note the whole background is 64x06)
 	spriteReader.setPNGIntoBackground("../head.png", glm::uvec2(40,40), glm::uvec2(20,20));
+	// another png into background
+	spriteReader.setPNGIntoBackground("../house.png", glm::uvec2(48,40), glm::uvec2(5,10));
 }
 
 PlayMode::~PlayMode() {
@@ -39,10 +46,14 @@ bool PlayMode::handle_event(SDL_Event const &evt, glm::uvec2 const &window_size)
 
 	if (evt.type == SDL_KEYDOWN) {
 		if (evt.key.keysym.sym == SDLK_LEFT) {
+			playerSprite.setVisible();
+			playerSprite2.setInVisible();
 			left.downs += 1;
 			left.pressed = true;
 			return true;
 		} else if (evt.key.keysym.sym == SDLK_RIGHT) {
+			playerSprite2.setVisible();
+			playerSprite.setInVisible();
 			right.downs += 1;
 			right.pressed = true;
 			return true;
@@ -55,6 +66,7 @@ bool PlayMode::handle_event(SDL_Event const &evt, glm::uvec2 const &window_size)
 			down.pressed = true;
 			return true;
 		}
+
 	} else if (evt.type == SDL_KEYUP) {
 		if (evt.key.keysym.sym == SDLK_LEFT) {
 			left.pressed = false;
@@ -106,7 +118,8 @@ void PlayMode::draw(glm::uvec2 const &drawable_size) {
 	);
 
 	// draw the spriteGround
-	playerSprite.draw(int32_t(player_at.x),int32_t(player_at.y));
+	playerSprite.draw(int32_t(player_at.x),int32_t(player_at.y));	// one of these two playerSprites is set invisible
+	playerSprite2.draw(int32_t(player_at.x),int32_t(player_at.y));
 	bullet.draw(int32_t(player_at.x + 50),int32_t(player_at.y + 50));
 	bullet2.draw(int32_t(player_at.x + 60),int32_t(player_at.y + 60));
 	bullet3.draw(int32_t(player_at.x + 70),int32_t(player_at.y + 70));

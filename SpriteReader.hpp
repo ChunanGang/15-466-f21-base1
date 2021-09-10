@@ -10,8 +10,14 @@ struct SpriteGroup{
     std::vector<uint32_t> sprite_indices; // indices of sprites on the ppu
     uint32_t width, height;   // width/height of the sprite group, with one sprite/tile as a unit
     void draw(int32_t pos_x,int32_t pos_y ); // draw the SpriteGroup in pos (left bottom point)
+    bool visible = true;
+    void setInVisible(); // set the spriteGroup obj to be invisible
+    void setVisible();   // set the spriteGroup obj to be visible
+    bool isVisible() {return visible;}
 };
 
+// A spriteReader object helps you load png files into background,
+//   or into a spriteGround
 class SpriteReader{
 
     PPU466 * ppu; 

@@ -134,18 +134,6 @@ void setTileBits(PPU466::Tile & tile, int row, int col, int colorIndex){
     tile.bit1[row] |= bit1 << col;
 }
 
-// draw function of SpriteGroup
-void SpriteGroup::draw(int32_t pos_x,int32_t pos_y ){
-    // go over all sprites, and change pos accordingly
-    for(uint32_t i =0; i < height; i++){
-        for(uint32_t j=0; j< width; j++){
-            uint32_t sprite_index = sprite_indices[i*width + j];
-            ppu->sprites[sprite_index].x = pos_x + j*8;
-	        ppu->sprites[sprite_index].y = pos_y + i*8;
-        }
-    }
-}
-
 // ---------- background sprite --------------- //
 
 // read a 8x8 png and set it as basic background
@@ -257,4 +245,40 @@ void SpriteReader::setPNGIntoBackground(std::string const & path, glm::uvec2 siz
 
 }
 
+
+// --------------- SpriteGroup Functions ------------------- //
+
+// draw function of SpriteGroup
+void SpriteGroup::draw(int32_t pos_x,int32_t pos_y ){
+    // only draw if visible
+    if (!visible)
+        return;
+    // go over all sprites, and change pos accordingly
+    for(uint32_t i =0; i < height; i++){
+        for(uint32_t j=0; j< width; j++){
+            uint32_t sprite_index = sprite_indices[i*width + j];
+            ppu->sprites[sprite_index].x = pos_x + j*8;
+	        ppu->sprites[sprite_index].y = pos_y + i*8;
+        }
+    }
+}
+
+// set the spriteGroup obj to be invisible 
+void SpriteGroup::setInVisible(){
+    // go over all sprites
+    for(uint32_t i =0; i < height; i++){
+        for(uint32_t j=0; j< width; j++){
+            // move the sprite off the screen (see PPU466.hpp, line 136 for why)
+            uint32_t sprite_index = sprite_indices[i*width + j];
+            ppu->sprites[sprite_index].x = 0;
+	        ppu->sprites[sprite_index].y = 250;
+        }
+    }
+    visible = false;
+}
+
+// set the spriteGroup obj to be visible
+void SpriteGroup::setVisible(){
+    visible = true; // this allow draw() to set the position back on the screen
+}
 

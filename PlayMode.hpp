@@ -38,8 +38,10 @@ struct PlayMode : Mode {
 	SpriteReader spriteReader;
 	// characters as spritegroup (read from png)
 	SpriteGroup playerSprite;
+	SpriteGroup playerSprite2;
 	//SpriteGroup monster;
 	SpriteGroup bullet;
 	SpriteGroup bullet2;
 	SpriteGroup bullet3;
+	// !!!!! REMEMBER !!!! only 64 sprites available 
 };
