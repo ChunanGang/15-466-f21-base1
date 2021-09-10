@@ -16,7 +16,7 @@ Players also run the game with the ported png images. Or, they can create their 
 
 Our assets pipeline relies on two classes:
 
-#####1. SpriteGroup
+#### 1. SpriteGroup
 
 A SpriteGroup object can be viewed as a group of sprites. Since one sprite has only 8x8 pixels, a SpriteGroup object allows the program to use images of any size.
 
@@ -34,7 +34,7 @@ A SpriteGroup object can be viewed as a group of sprites. Since one sprite has o
     // return if it is visiable
     bool isVisible();
 
-#####2. SpriteReader
+#### 2. SpriteReader
 
 A SpriteReader object reads a png file and constructs a SpriteGroup object from it or set it into the background. It also properly setups everything in PPU466, so that developers can use the images freely without considering the details of PPU466.
 
