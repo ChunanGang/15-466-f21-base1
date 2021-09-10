@@ -55,7 +55,7 @@ A SpriteReader object reads a png file and constructs a SpriteGroup object from 
     // duplicate an existing spriteGroup
     void duplicateSpriteGroup(SpriteGroup const & from, SpriteGroup & to);
 
-#####Examples:
+#### Examples:
 
     SpriteGroup bullet, bullet2, bullet3;
     SpriteReader spriteReader;
