@@ -4,13 +4,15 @@
 #include <iostream>
 
 
-void SpriteReader::getSpriteGroupFromPNG(std::string const & path, glm::uvec2 size, SpriteGroup & spriteGroup){
+void SpriteReader::getSpriteGroupFromPNG(std::string const & path, glm::uvec2 size, int priority, SpriteGroup & spriteGroup){
     
-    // read png into vector pic
+    assert(palette_offset_index < 8); // 8 available palettes
+
+    // read png into vector - pic
     std::vector< glm::u8vec4 > pic;
     load_png( data_path(path), &size, &pic, LowerLeftOrigin); //TODO add try-catch block
 
-    // set up palette for this picture 
+    // set up palette for this png 
     // !!! We assume the input png has no more than 4 colors !!!
     // So all tiles use the same palatte
     // --- set up palette ---
@@ -25,16 +27,50 @@ void SpriteReader::getSpriteGroupFromPNG(std::string const & path, glm::uvec2 si
         }
     }
 
+    // calculate size of the png, in terms of tiles
+    uint32_t width = size.x / 8;
+    uint32_t height = size.y / 8;
+    spriteGroup.width = width;
+    spriteGroup.height = height;
+    spriteGroup.ppu = ppu;
+
     // go over each tile (8x8 block) in the png, add them into ppu 
-    for(uint32_t i =0; i < size.x; i+=8){
-        for(uint32_t j=0; j< size.y; j+=8){
+    for(uint32_t i =0; i < height; i++){
+        for(uint32_t j=0; j< width; j++){
             //std::cout << std::hex << pic[i * size.x + j].r << ", " <<  pic[i * size.x + j].g << ", " <<  pic[i * size.x + j].b << "  | ";
-            // for each tile (8x8 block)
-            //ppu.tile_table[tile_offset_index];
+            
+            // --- for each tile (8x8 block) ---
+
+            PPU466::Tile & curTile = ppu->tile_table[tile_offset_index];
+            // set all 8x8 bits of the current tile
+            for (uint32_t y=0; y < 8; y++){
+                for (uint32_t x=0; x < 8; x++){
+                    // find the color of this bit, and convert into palatte index
+                    int indexInPic = (i*8 + y) * size.x + (j*8 + x);
+                    int colorIndex = findColorInPalette(palatte, pic[indexInPic]);
+                    // set this bit 
+                    setTileBits(curTile, y, x, colorIndex);
+                }
+            }
+
+            // setup a sprite from the tile/palette
+            ppu->sprites[sprite_offset_index].index = tile_offset_index;
+            uint8_t attributes = 0;
+            attributes |= priority << 7;    // setup priority bit
+            attributes |= palette_offset_index; // set palatte index
+            ppu->sprites[sprite_offset_index].attributes = attributes;
+            // add the sprite into spriteGroup
+            spriteGroup.sprite_indices.push_back(sprite_offset_index);
+
+            // done with current tile. increment tile offset & sprite offset
+            tile_offset_index += 1;
+            sprite_offset_index += 1;
         }
         //std::cout << " \n";
     }
-    ppu->palette_table[7][1] = pic[0];
+
+    // done with this png, incre palette_offset_index
+    palette_offset_index += 1;
 }
 
 // helper function that check if the input color is in the Palette
@@ -46,7 +82,7 @@ void addColorToPalette(PPU466::Palette & palatte, int & curPaletteSize, glm::u8v
             return ;
     }
     // not exist, create
-    //static_assert(curPaletteSize <= 3, "ONLY 4 colors allowed");
+    assert(curPaletteSize <= 3); // at most 4 colors in one png
     palatte[curPaletteSize] = color;
     curPaletteSize += 1;
 }
@@ -77,5 +113,18 @@ void setTileBits(PPU466::Tile & tile, int row, int col, int colorIndex){
     // set to actual bit
     tile.bit1[row] |= bit1 << col;
 }
+
+// draw function of SpriteGroup
+void SpriteGroup::draw(int32_t pos_x,int32_t pos_y ){
+    // go over all sprites, and change pos accordingly
+    for(uint32_t i =0; i < height; i++){
+        for(uint32_t j=0; j< width; j++){
+            uint32_t sprite_index = sprite_indices[i*width + j];
+            ppu->sprites[sprite_index].x = pos_x + j*8;
+	        ppu->sprites[sprite_index].y = pos_y + i*8;
+        }
+    }
+}
+
 
 

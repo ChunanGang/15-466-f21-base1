@@ -1,5 +1,4 @@
 #include "PlayMode.hpp"
-#include "SpriteReader.hpp"
 
 //for the GL_ERRORS() macro:
 #include "gl_errors.hpp"
@@ -18,7 +17,7 @@ PlayMode::PlayMode() {
 	//   and check that script into your repository.
 
 	//Also, *don't* use these tiles in your game:
-
+/*
 	{ //use tiles 0-16 as some weird dot pattern thing:
 		std::array< uint8_t, 8*8 > distance;
 		for (uint32_t y = 0; y < 8; ++y) {
@@ -61,12 +60,12 @@ PlayMode::PlayMode() {
 		0b01111110,
 	};
 	ppu.tile_table[32].bit1 = {
-		0b00000000,
-		0b00000000,
-		0b00011000,
-		0b00100100,
-		0b00000000,
-		0b00100100,
+		0b10000000,
+		0b10000000,
+		0b10011000,
+		0b10100100,
+		0b10000000,
+		0b10100100,
 		0b00000000,
 		0b00000000,
 	};
@@ -102,11 +101,9 @@ PlayMode::PlayMode() {
 		glm::u8vec4(0x00, 0x00, 0x00, 0xff),
 		glm::u8vec4(0x00, 0x00, 0x00, 0x00),
 	};
-
-	// SpriteReader spriteReader(&ppu);
-	// SpriteGroup sg;
-	// spriteReader.getSpriteGroupFromPNG("../pic.png", glm::uvec2(40,40), sg);
-
+*/
+	spriteReader.setPPUPtr(&ppu);
+	spriteReader.getSpriteGroupFromPNG("../pic.png", glm::uvec2(40,40), 0, playerSprite);
 }
 
 PlayMode::~PlayMode() {
@@ -187,14 +184,15 @@ void PlayMode::draw(glm::uvec2 const &drawable_size) {
 	for (uint32_t y = 0; y < PPU466::BackgroundHeight; ++y) {
 		for (uint32_t x = 0; x < PPU466::BackgroundWidth; ++x) {
 			//TODO: make weird plasma thing
-			ppu.background[x+PPU466::BackgroundWidth*y] = ((x+y)%16);
+			ppu.background[x+PPU466::BackgroundWidth*y] = 0;
 		}
 	}
 
 	//background scroll:
-	ppu.background_position.x = int32_t(-0.5f * player_at.x);
-	ppu.background_position.y = int32_t(-0.5f * player_at.y);
-
+	//ppu.background_position.x = int32_t(-0.5f * player_at.x);
+	//ppu.background_position.y = int32_t(-0.5f * player_at.y);
+	
+/*
 	//player sprite:
 	ppu.sprites[0].x = int32_t(player_at.x);
 	ppu.sprites[0].y = int32_t(player_at.y);
@@ -210,6 +208,12 @@ void PlayMode::draw(glm::uvec2 const &drawable_size) {
 		ppu.sprites[i].attributes = 6;
 		if (i % 2) ppu.sprites[i].attributes |= 0x80; //'behind' bit
 	}
+*/
+	playerSprite.draw(int32_t(player_at.x),int32_t(player_at.y));
+	// ppu.sprites[0].index = 0;
+	// ppu.sprites[0].attributes = 0;
+	// ppu.sprites[0].x = int32_t(player_at.x);
+	// ppu.sprites[0].y = int32_t(player_at.y);
 
 	//--- actually draw ---
 	ppu.draw(drawable_size);

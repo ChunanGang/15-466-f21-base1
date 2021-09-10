@@ -1,5 +1,6 @@
 #include "PPU466.hpp"
 #include "Mode.hpp"
+#include "SpriteReader.hpp"
 
 #include <glm/glm.hpp>
 
@@ -32,4 +33,11 @@ struct PlayMode : Mode {
 	//----- drawing handled by PPU466 -----
 
 	PPU466 ppu;
+
+	// sprite reader to read from png
+	SpriteReader spriteReader;
+	// characters as spritegroup (read from png)
+	SpriteGroup playerSprite;
+	//SpriteGroup monster;
+	//SpriteGroup bullet;
 };
