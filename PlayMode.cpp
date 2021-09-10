@@ -9,101 +9,27 @@
 #include <random>
 
 PlayMode::PlayMode() {
-	//TODO:
-	// you *must* use an asset pipeline of some sort to generate tiles.
-	// don't hardcode them like this!
-	// or, at least, if you do hardcode them like this,
-	//  make yourself a script that spits out the code that you paste in here
-	//   and check that script into your repository.
-
-	//Also, *don't* use these tiles in your game:
-/*
-	{ //use tiles 0-16 as some weird dot pattern thing:
-		std::array< uint8_t, 8*8 > distance;
-		for (uint32_t y = 0; y < 8; ++y) {
-			for (uint32_t x = 0; x < 8; ++x) {
-				float d = glm::length(glm::vec2((x + 0.5f) - 4.0f, (y + 0.5f) - 4.0f));
-				d /= glm::length(glm::vec2(4.0f, 4.0f));
-				distance[x+8*y] = std::max(0,std::min(255,int32_t( 255.0f * d )));
-			}
-		}
-		for (uint32_t index = 0; index < 16; ++index) {
-			PPU466::Tile tile;
-			uint8_t t = (255 * index) / 16;
-			for (uint32_t y = 0; y < 8; ++y) {
-				uint8_t bit0 = 0;
-				uint8_t bit1 = 0;
-				for (uint32_t x = 0; x < 8; ++x) {
-					uint8_t d = distance[x+8*y];
-					if (d > t) {
-						bit0 |= (1 << x);
-					} else {
-						bit1 |= (1 << x);
-					}
-				}
-				tile.bit0[y] = bit0;
-				tile.bit1[y] = bit1;
-			}
-			ppu.tile_table[index] = tile;
-		}
-	}
-
-	//use sprite 32 as a "player":
-	ppu.tile_table[32].bit0 = {
-		0b01111110,
-		0b11111111,
-		0b11111111,
-		0b11111111,
-		0b11111111,
-		0b11111111,
-		0b11111111,
-		0b01111110,
-	};
-	ppu.tile_table[32].bit1 = {
-		0b10000000,
-		0b10000000,
-		0b10011000,
-		0b10100100,
-		0b10000000,
-		0b10100100,
-		0b00000000,
-		0b00000000,
-	};
-
-	//makes the outside of tiles 0-16 solid:
-	ppu.palette_table[0] = {
-		glm::u8vec4(0x00, 0x00, 0x00, 0x00),
-		glm::u8vec4(0x00, 0x00, 0x00, 0xff),
-		glm::u8vec4(0x00, 0x00, 0x00, 0x00),
-		glm::u8vec4(0x00, 0x00, 0x00, 0xff),
-	};
-
-	//makes the center of tiles 0-16 solid:
-	ppu.palette_table[1] = {
-		glm::u8vec4(0x00, 0x00, 0x00, 0x00),
-		glm::u8vec4(0x00, 0x00, 0x00, 0x00),
-		glm::u8vec4(0x00, 0x00, 0x00, 0xff),
-		glm::u8vec4(0x00, 0x00, 0x00, 0xff),
-	};
-
-	//used for the player:
-	ppu.palette_table[7] = {
-		glm::u8vec4(0x00, 0x00, 0x00, 0x00),
-		glm::u8vec4(0xff, 0xff, 0x00, 0xff),
-		glm::u8vec4(0x00, 0x00, 0x00, 0xff),
-		glm::u8vec4(0x00, 0x00, 0x00, 0xff),
-	};
-
-	//used for the misc other sprites:
-	ppu.palette_table[6] = {
-		glm::u8vec4(0x00, 0x00, 0x00, 0x00),
-		glm::u8vec4(0x88, 0x88, 0xff, 0xff),
-		glm::u8vec4(0x00, 0x00, 0x00, 0xff),
-		glm::u8vec4(0x00, 0x00, 0x00, 0x00),
-	};
-*/
+	
+	// link the using ppu to the sprite reader
 	spriteReader.setPPUPtr(&ppu);
-	spriteReader.getSpriteGroupFromPNG("../pic.png", glm::uvec2(40,40), 0, playerSprite);
+
+	// read a player.png into the playerSprite object. Which can be draw directly. 
+	spriteReader.getSpriteGroupFromPNG("../player.png", glm::uvec2(40,40), 0, playerSprite);
+
+	// read a bullet.png into the bullet object
+	spriteReader.getSpriteGroupFromPNG("../bullet.png", glm::uvec2(8,8), 0, bullet);
+	// if the spriteGroups are using the same image, we can call duplicateSpriteGroup
+	spriteReader.duplicateSpriteGroup(bullet, bullet2);
+	spriteReader.duplicateSpriteGroup(bullet, bullet3);
+
+	// read a 8x8 png and set it the basic background (covers the whole background)
+	spriteReader.setBackgroundGeneralSprite("../back.png");
+
+	// read a png imag and set it into background in a specified location
+	// In this case, we are reading a head.png with size 40x40, and put in into
+	//  the background in location [20,20] from left bot, with tile as the unit. 
+	//  (note the whole background is 64x06)
+	spriteReader.setPNGIntoBackground("../head.png", glm::uvec2(40,40), glm::uvec2(20,20));
 }
 
 PlayMode::~PlayMode() {
@@ -179,41 +105,11 @@ void PlayMode::draw(glm::uvec2 const &drawable_size) {
 		0xff
 	);
 
-	//tilemap gets recomputed every frame as some weird plasma thing:
-	//NOTE: don't do this in your game! actually make a map or something :-)
-	for (uint32_t y = 0; y < PPU466::BackgroundHeight; ++y) {
-		for (uint32_t x = 0; x < PPU466::BackgroundWidth; ++x) {
-			//TODO: make weird plasma thing
-			ppu.background[x+PPU466::BackgroundWidth*y] = 0;
-		}
-	}
-
-	//background scroll:
-	//ppu.background_position.x = int32_t(-0.5f * player_at.x);
-	//ppu.background_position.y = int32_t(-0.5f * player_at.y);
-	
-/*
-	//player sprite:
-	ppu.sprites[0].x = int32_t(player_at.x);
-	ppu.sprites[0].y = int32_t(player_at.y);
-	ppu.sprites[0].index = 32;
-	ppu.sprites[0].attributes = 7;
-
-	//some other misc sprites:
-	for (uint32_t i = 1; i < 63; ++i) {
-		float amt = (i + 2.0f * background_fade) / 62.0f;
-		ppu.sprites[i].x = int32_t(0.5f * PPU466::ScreenWidth + std::cos( 2.0f * M_PI * amt * 5.0f + 0.01f * player_at.x) * 0.4f * PPU466::ScreenWidth);
-		ppu.sprites[i].y = int32_t(0.5f * PPU466::ScreenHeight + std::sin( 2.0f * M_PI * amt * 3.0f + 0.01f * player_at.y) * 0.4f * PPU466::ScreenWidth);
-		ppu.sprites[i].index = 32;
-		ppu.sprites[i].attributes = 6;
-		if (i % 2) ppu.sprites[i].attributes |= 0x80; //'behind' bit
-	}
-*/
+	// draw the spriteGround
 	playerSprite.draw(int32_t(player_at.x),int32_t(player_at.y));
-	// ppu.sprites[0].index = 0;
-	// ppu.sprites[0].attributes = 0;
-	// ppu.sprites[0].x = int32_t(player_at.x);
-	// ppu.sprites[0].y = int32_t(player_at.y);
+	bullet.draw(int32_t(player_at.x + 50),int32_t(player_at.y + 50));
+	bullet2.draw(int32_t(player_at.x + 60),int32_t(player_at.y + 60));
+	bullet3.draw(int32_t(player_at.x + 70),int32_t(player_at.y + 70));
 
 	//--- actually draw ---
 	ppu.draw(drawable_size);

@@ -39,5 +39,7 @@ struct PlayMode : Mode {
 	// characters as spritegroup (read from png)
 	SpriteGroup playerSprite;
 	//SpriteGroup monster;
-	//SpriteGroup bullet;
+	SpriteGroup bullet;
+	SpriteGroup bullet2;
+	SpriteGroup bullet3;
 };
