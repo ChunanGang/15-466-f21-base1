@@ -10,7 +10,7 @@
 using namespace glm;
 using namespace std;
 
-#define MAX_BULLETS ( 10 )
+#define MAX_BULLETS ( 5 )
 
 struct PlayMode : Mode {
 	PlayMode();
@@ -34,12 +34,12 @@ struct PlayMode : Mode {
 	float background_fade = 0.5f;
 	vec2 court_radius = vec2(256.0f, 240.0f);
 	vec2 bullet_radius = vec2(4.0f, 4.0f);
-	vec2 player_radius = vec2(8.0f, 8.0f);
-	vec2 monster_radius = vec2(8.0f, 8.0f);
+	vec2 player_radius = vec2(16.0f, 16.0f);
+	vec2 monster_radius = vec2(16.0f, 16.0f);
 
 	float player_speed = 64.0f;
 	float monster_speed = 128.0f;
-	float monster_accel = 64.0f;
+	float monster_accel = 32.0f;
 	float bullet_speed = 128.0f;
 
 	float shoot_interval = 0.5f;
@@ -71,8 +71,8 @@ struct PlayMode : Mode {
 	deque<Bullet*> bullets;
 
 	//----- score and time -----
-	uint player_health = 3;
-	uint monster_health = 10;
+	int player_health = 4;
+	int monster_health = 4;
 
 	float player_reset_time = 1.0f;
 	float monster_reset_time = 0.3f;
@@ -92,6 +92,9 @@ struct PlayMode : Mode {
 	// sprite reader to read from png
 	SpriteReader spriteReader;
 
+	// aim
+	SpriteGroup aimSprite;
+
 	// character
 	SpriteGroup playerSprite;
 
@@ -100,6 +103,10 @@ struct PlayMode : Mode {
 
 	// target
 	SpriteGroup targetSprite;
+
+	// heart
+	SpriteGroup heartSprite[4];
+	SpriteGroup heartSprite2[4];
 
 	//SpriteGroup bullet;
 	SpriteGroup bulletSprite[MAX_BULLETS];

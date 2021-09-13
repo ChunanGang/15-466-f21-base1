@@ -15,30 +15,42 @@ PlayMode::PlayMode() {
 
 	// ---- character sprites ---- //
 	// read a player.png into playerSprite. Which can be draw directly later. 
-	spriteReader.getSpriteGroupFromPNG("../player.png", 0, playerSprite);
+	spriteReader.getSpriteGroupFromPNG("../Images/crying.png", 0, playerSprite);
 
 	// load the second picture for monster
-	spriteReader.getSpriteGroupFromPNG("../player2.png", 0, monsterSprite);
+	spriteReader.getSpriteGroupFromPNG("../Images/Poop.png", 0, monsterSprite);
 
-	//spriteReader.getSpriteGroupFromPNG("../head.png", 0, targetSprite);
+    spriteReader.getSpriteGroupFromPNG("../Images/aim.png", 0, aimSprite);
 
 	// read a bullet.png into the bullet spriteGroup
-	spriteReader.getSpriteGroupFromPNG("../bullet.png", 0, bulletSprite[0]);
+	spriteReader.getSpriteGroupFromPNG("../Images/tear.png", 0, bulletSprite[0]);
 	
 	// if the spriteGroups are using the same image, we can call duplicateSpriteGroup
 	for(int i = 1; i < MAX_BULLETS; i++) {
 		spriteReader.duplicateSpriteGroup(bulletSprite[0], bulletSprite[i]);
 	} 
 
+	// read a bullet.png into the bullet spriteGroup
+	spriteReader.getSpriteGroupFromPNG("../Images/heart.png", 0, heartSprite[0]);
+
+	// if the spriteGroups are using the same image, we can call duplicateSpriteGroup
+	for (int i = 1; i < 4; i++) {
+		spriteReader.duplicateSpriteGroup(heartSprite[0], heartSprite[i]);
+	}
+
+	for (int i = 0; i < 4; i++) {
+		spriteReader.duplicateSpriteGroup(heartSprite[0], heartSprite2[i]);
+	}
+
 	// ---- backgrounds ---- //
 	// read a 8x8 png and set it the basic background (covers the whole background)
-	spriteReader.setBackgroundGeneralSprite("../back.png");
+	spriteReader.setBackgroundGeneralSprite("../Images/bg.png");
 
 	// read a png imag and set it into background in a specified location
 	// In this case, we are reading a head.png and put in into
 	//  the background in location [20,20] from left bot, with tile as the unit. 
 	//  (note the whole background is 64x06)
-	//spriteReader.setPNGIntoBackground("../head.png", glm::uvec2(20,20));
+	//spriteReader.setPNGIntoBackground("../Images/toilet.png", glm::uvec2(20,20));
 	// another png into background
 	//spriteReader.setPNGIntoBackground("../house.png", glm::uvec2(5,10));
 }
@@ -185,6 +197,13 @@ void PlayMode::update(float elapsed) {
 				vel_monster -= bullet_accel;
 				bullets[i]->isActive = false;
 				monster_health--;
+				heartSprite2[monster_health].setInVisible();
+				if (monster_health == 0) {
+					monster_health = 4;
+					pos_monster = (vec2((float)rand() / RAND_MAX, (float)rand() / RAND_MAX)) * court_radius;
+					vel_monster = 0.0f;
+					monster_accel = std::min(monster_accel * 2.0f, 128.0f);
+				}
 			}	
 		}
 	}
@@ -200,6 +219,16 @@ void PlayMode::update(float elapsed) {
 		vel_monster = 0.0f;
 		player_reset_timer = player_reset_time;
 		player_health--;
+		heartSprite[player_health].setInVisible();
+		//reset game
+		if (player_health == 0) {
+			player_health = 4;
+			monster_health = 4;
+			pos_player = court_radius / 2.0f;
+			pos_monster = (vec2((float)rand() / RAND_MAX, (float)rand() / RAND_MAX)) * court_radius;
+			vel_monster = 0.0f;
+			monster_accel = 32.0f;
+		}
 	}
 
 	//----- monster movement -----
@@ -258,7 +287,22 @@ void PlayMode::draw(glm::uvec2 const &drawable_size) {
 	// draw the spriteGround
 	playerSprite.draw(int32_t(pos_player.x - player_radius.x), int32_t(pos_player.y - player_radius.y));
 
+	// draw heart
+	for (int i = 0; i < player_health; i++) {
+		heartSprite[i].setVisible();
+		heartSprite[i].draw(int32_t(pos_player.x - player_radius.x - 3.0f + i * 10.0f), int32_t(pos_player.y + player_radius.y + 2.0f));
+	}
+
+	for (int i = 0; i < monster_health; i++) {
+		heartSprite2[i].setVisible();
+		heartSprite2[i].draw(int32_t(pos_monster.x - monster_radius.x - 3.0f + i * 10.0f), int32_t(pos_monster.y + monster_radius.y + 2.0f));
+	}
+
+	//draw monster
 	monsterSprite.draw(int32_t(pos_monster.x - monster_radius.x), int32_t(pos_monster.y - monster_radius.y));
+
+ 	//draw cursor 
+	aimSprite.draw(int32_t(pos_target.x - 4.0f), int32_t(pos_target.y - 4.0f));
 
 	//bullets
 	for (int i = 0; i < bullets.size(); i++) {

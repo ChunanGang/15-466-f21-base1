@@ -2,7 +2,7 @@
 
 Author: Wenxuan(Neal) Huang, Chunan(Oscar) Huang
 
-Design: (TODO: In two sentences or fewer, describe what is new and interesting about your game.)
+Design: Play as a crying emoji trying to fight back against disgusting poops with your tears. 
 
 Screen Shot:
 
@@ -94,9 +94,9 @@ A SpriteReader object reads a png file and constructs a SpriteGroup object from 
 
 ##How To Play:
 
-(TODO: describe the controls and (if needed) goals/strategy.)
+WASD to Move, mouse to aim and shoot
 
-Sources: (TODO: list a source URL for any assets you did not create yourself. Make sure you have a license for the asset.)
+Sources: N/A, all picture draw by ourselves.
 
 This game was built with [NEST](NEST.md).
 
