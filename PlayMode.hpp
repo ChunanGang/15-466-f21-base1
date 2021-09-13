@@ -7,6 +7,11 @@
 #include <vector>
 #include <deque>
 
+using namespace glm;
+using namespace std;
+
+#define MAX_BULLETS ( 10 )
+
 struct PlayMode : Mode {
 	PlayMode();
 	virtual ~PlayMode();
@@ -18,17 +23,67 @@ struct PlayMode : Mode {
 
 	//----- game state -----
 
-	//input tracking:
-	struct Button {
-		uint8_t downs = 0;
-		uint8_t pressed = 0;
-	} left, right, down, up;
+	//----- input state -----
+	bool Mouse_Left = false;
+	bool W_pressed = false;
+	bool A_pressed = false;
+	bool S_pressed = false;
+	bool D_pressed = false;
 
-	//some weird background animation:
-	float background_fade = 0.0f;
+	//----- game setting -----
+	float background_fade = 0.5f;
+	vec2 court_radius = vec2(256.0f, 240.0f);
+	vec2 bullet_radius = vec2(4.0f, 4.0f);
+	vec2 player_radius = vec2(8.0f, 8.0f);
+	vec2 monster_radius = vec2(8.0f, 8.0f);
 
-	//player position:
-	glm::vec2 player_at = glm::vec2(0.0f);
+	float player_speed = 64.0f;
+	float monster_speed = 128.0f;
+	float monster_accel = 64.0f;
+	float bullet_speed = 128.0f;
+
+	float shoot_interval = 0.5f;
+
+	//----- game state -----
+	vec2 pos_player = court_radius / 2.0f;
+
+	vec2 pos_monster = (vec2((float)rand() / RAND_MAX, (float)rand() / RAND_MAX)) * court_radius;
+	float vel_monster = 0.0f;
+
+	vec2 pos_target;
+
+	float shoot_timer = 0.0f;
+	float bullet_accel = 64.0f;
+
+	bool monster_visible = true;
+	bool player_visible = true;
+	
+	//----- bullet instance -----
+	struct Bullet {
+		Bullet(
+			vec2 const& Position_, vec2 const& Direction_) :
+			Position(Position_), Direction(Direction_), isActive(true){ }
+		vec2 Position;
+		vec2 Direction;
+		bool isActive;
+	};
+
+	deque<Bullet*> bullets;
+
+	//----- score and time -----
+	uint player_health = 3;
+	uint monster_health = 10;
+
+	float player_reset_time = 1.0f;
+	float monster_reset_time = 0.3f;
+	float player_reset_timer = 0.0f;
+	float monster_reset_timer = 0.0f;
+
+	float player_flick_time = 0.05f;
+	float player_flick_timer = 0.0f;
+
+	float monster_flick_time = 0.05f;
+	float monster_flick_timer = 0.0f;
 
 	//----- drawing handled by PPU466 -----
 
@@ -36,12 +91,17 @@ struct PlayMode : Mode {
 
 	// sprite reader to read from png
 	SpriteReader spriteReader;
-	// characters as spritegroup (read from png)
+
+	// character
 	SpriteGroup playerSprite;
-	SpriteGroup playerSprite2;
-	//SpriteGroup monster;
-	SpriteGroup bullet;
-	SpriteGroup bullet2;
-	SpriteGroup bullet3;
+
+	// monster
+	SpriteGroup monsterSprite;
+
+	// target
+	SpriteGroup targetSprite;
+
+	//SpriteGroup bullet;
+	SpriteGroup bulletSprite[MAX_BULLETS];
 	// !!!!! REMEMBER !!!! only 64 sprites available 
 };
