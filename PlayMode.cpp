@@ -50,9 +50,9 @@ PlayMode::PlayMode() {
 	// In this case, we are reading a head.png and put in into
 	//  the background in location [20,20] from left bot, with tile as the unit. 
 	//  (note the whole background is 64x06)
-	//spriteReader.setPNGIntoBackground("../Images/toilet.png", glm::uvec2(20,20));
+	spriteReader.setPNGIntoBackground("../Images/toilet.png", glm::uvec2(16,16));
 	// another png into background
-	//spriteReader.setPNGIntoBackground("../house.png", glm::uvec2(5,10));
+	spriteReader.setPNGIntoBackground("../Images/cleaner.png", glm::uvec2(4,4));
 }
 
 PlayMode::~PlayMode() {
