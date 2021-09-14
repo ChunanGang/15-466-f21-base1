@@ -94,7 +94,7 @@ A SpriteReader object reads a png file and constructs a SpriteGroup object from 
 
 ## How To Play:
 
-WASD to Move, mouse to aim and shoot
+WASD to Move, mouse to aim and shoot with left click.
 
 Sources: N/A, all picture draw by ourselves.
 
