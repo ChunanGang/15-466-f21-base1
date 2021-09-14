@@ -1,4 +1,4 @@
-# (TODO: your game's title)
+# GET AWAY !!!
 
 Author: Wenxuan(Neal) Huang, Chunan(Oscar) Huang
 
@@ -92,7 +92,7 @@ A SpriteReader object reads a png file and constructs a SpriteGroup object from 
 	spriteReader.setPNGIntoBackground("../head.png", glm::uvec2(20,20));
 
 
-##How To Play:
+## How To Play:
 
 WASD to Move, mouse to aim and shoot
 
